@@ -7,7 +7,7 @@ class BlocksTest < Minitest::Test
     input = [11, -2, 32, 14, -5, 26]
     expected = [22, 64, -10]
 
-    assert_equal(expected, input.even_map { |item| item * 2 })
+    assert_equal(expected, input.even_map { |item| item * 2 })  #this is really do | .. | syntax one-line lovers..
   end
 
   def test_even_reduce
@@ -17,7 +17,7 @@ class BlocksTest < Minitest::Test
     assert_equal(expected, input.even_reduce(0) { |acc, item| acc + item })
   end
 
-  def test_even_reduce
+  def test_even_reduce_lambda
     input = [11, -2, 32, 14, -5, 26]
     expected = 38
 
@@ -39,7 +39,14 @@ class Array
   # @yield [item] Gives array element to block
   # @return [Array]
   def even_map
-    raise 'Implement me'
+      evenarr=[]
+      self.each_with_index do |n, i|
+          if i.even?
+              evenarr.push yield(n)
+          end
+      end
+      return evenarr
+#    raise 'Implement me'
   end
 
   # Reduce only elements with even indexes
@@ -47,7 +54,12 @@ class Array
   # @yield [item] Gives array element to block
   # @return [Fixnum]
   def even_reduce(acc)
-    raise 'Implement me'
+      self.each_with_index do |n, i|
+          if i.even?
+              acc=yield(acc,n)
+          end
+      end
+      return acc
   end
 
   # Reduce only elements with even indexes
@@ -55,7 +67,12 @@ class Array
   # @param [lambda]
   # @return [Fixnum]
   def even_reduce_arg(acc, func)
-    raise 'Implement me'
+      self.each_with_index do |n, i|
+          if i.even?
+              acc=func.call(acc,n)
+          end
+      end
+      return acc
   end
 
   # Map elements
@@ -63,7 +80,17 @@ class Array
   # @yield [prev, current, nexts] Gives current and sibling elements to block
   # @return [Fixnum]
   def map_with_siblings
-    raise 'Implement me'
+      siblings=[]
+      self.each_with_index do |n, i|
+          prv=self[i-1]
+          if i==0
+              prv=nil
+          end
+          cr=self[i]
+          nxt=self[i+1]
+          siblings.push(yield(prv,cr,nxt))
+      end
+      return siblings
   end
 end
 
